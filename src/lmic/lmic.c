@@ -742,7 +742,8 @@ static u4_t convFreq (xref2u1_t ptr) {
     u4_t freq = (os_rlsbf4(ptr-1) >> 8) * 100;
     if( freq < US915_FREQ_MIN || freq > US915_FREQ_MAX )
         freq = 0;
-    return freq;
+    //SCN return freq;
+    return US915_125kHz_UPFBASE; //SCN
 }
 
 bit_t LMIC_setupChannel (u1_t chidx, u4_t freq, u2_t drmap, s1_t band) {
@@ -828,6 +829,8 @@ static void updateTx (ostime_t txbeg) {
 // US does not have duty cycling - return now as earliest TX time
 #define nextTx(now) (_nextTx(),(now))
 static void _nextTx (void) {
+    LMIC.chRnd=0; // fixed to chan 0 for SCN
+    return; //SCN
     if( LMIC.chRnd==0 )
         LMIC.chRnd = os_getRndU1() & 0x3F;
     if( LMIC.datarate >= DR_SF8C ) { // 500kHz
